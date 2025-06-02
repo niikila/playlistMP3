@@ -1,16 +1,28 @@
-# playlist
+# PlaylistMP3
 
-A new Flutter project.
+Aplicación Flutter para **descarga y reproducción de música MP3 mediante streaming progresivo**, con soporte para ejecución en segundo plano y notificaciones persistentes.
 
-## Getting Started
+## 🎯 Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Descarga progresiva (streaming) de las canciones.
+- Reproducción que inicia antes de finalizar la descarga.
+- Buffer inteligente para evitar interrupciones.
+- Notificación persistente con controles (Reproducir, Pausar, Detener).
+- Interfaz amigable con:
+  - Lista de canciones con título y autor;
+  - Estado de la descarga 
+- Reproducción en segundo plano
 
-A few resources to get you started if this is your first Flutter project:
+## 👥 Integrantes del grupo
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Carolina Gonzales  
+- Natalie Fernandez  
+- Nicolás Lara  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Ver el archivo [LICENSE](LICENSE) para más información.
+
+Agregado README y licencia.
+
