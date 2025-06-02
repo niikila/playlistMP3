@@ -6,7 +6,7 @@
     <!--  Servicio en segundo plano para reproducción  -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
-    <!--  Mantener el dispositivo despierto al reproducir  -->
+    <!--  Mantener el dispositivo on al reproducir  -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!--  Notificaciones  -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
