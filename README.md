@@ -2,6 +2,10 @@
 
 Aplicación Flutter para **descarga y reproducción de música MP3 mediante streaming progresivo**, con soporte para ejecución en segundo plano y notificaciones persistentes.
 
+<div style="display: flex; align-items: center;">
+  <img src="https://github.com/sabbinat/playlistMP3/blob/main/song_page.png?raw=true" width="110" height='200' style="margin-right: 10px;">
+</div>
+
 ## 🎯 Funcionalidades
 
 - Descarga progresiva (streaming) de las canciones.
