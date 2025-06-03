@@ -8,35 +8,40 @@ Aplicación Flutter para **descarga y reproducción de música MP3 mediante stre
 
 ## 🎯 Funcionalidades
 
-- Descarga progresiva (streaming) de las canciones.
-- Reproducción que inicia antes de finalizar la descarga.
-- Buffer inteligente para evitar interrupciones.git add .
-- Notificación persistente con controles (Reproducir, Pausar, Detener).
+- Descarga progresiva (streaming) de canciones: inicia la reproducción antes de que finalice la descarga completa.
+- Buffer inteligente que minimiza interrupciones durante la reproducción.
+- Notificaciones persistentes con controles: reproducir, pausar, detener, siguiente y anterior.
+- Reproducción en segundo plano usando el paquete audio_service.
 - Interfaz amigable con:
-    - Lista de canciones con título y autor;
-    - Estado de la descarga (no iniciado, en progreso, descargado).
-- Reproducción en segundo plano con el paquete `audio_service`.
+  - Lista de canciones mostrando título, autor y estado de descarga.
+  - Indicador visual del progreso de descarga.
+- Gestión de descargas:
+  - Descarga de archivos en segundo plano.
+  - Actualización en tiempo real del progreso.
+  - Manejo de archivos descargados para reproducción offline.
+- Manejo de estado centralizado mediante ChangeNotifier para facilitar la actualización de UI.
 
 ## 👥 Integrantes del grupo
 
-- Carolina González (@carogzv04)
-- Natalie Fernández (@sabbinat)
-- Nicolás Lara (@niikila)
+- Carolina González - (@carogzv04)
+- Natalie Fernández - (@sabbinat)
+- Nicolás Lara - (@niikila)
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías y paquetes principales
 
-- Flutter
-- Dart
-- http: ^1.2.0
-- just_audio: ^0.9.36
-- just_audio_background: ^0.0.1-beta.10
-- audio_service: ^0.18.10
-- audio_session: ^0.1.16
-- provider: ^6.1.2
-- path_provider: ^2.0.12
-- flutter_background_service: ^5.1.0
-- flutter_background_service_android: ^6.3.0
-- flutter_local_notifications: ^17.1.0
+- Flutter y Dart
+
+- Gestión audio y reproducción:
+  - just_audio
+  - audio_service
+  - just_audio_background
+  - audio_session
+- Descargas y servicios en background:
+  - flutter_background_service
+  - flutter_local_notifications
+- Manejo de estado con provider
+- Acceso a archivos locales con path_provider
+- Peticiones HTTP con http
 
 ## 📄 Licencia
 
