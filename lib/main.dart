@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:playlist/theme/theme_provider.dart';
+import 'package:playlist/viewmodels/connectivity_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'services/background_service.dart';
 import 'viewmodels/song_viewmodel.dart';
 import 'views/home_page.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
-
-Future <void> main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await JustAudioBackground.init(
@@ -24,6 +24,7 @@ Future <void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => SongViewmodel()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ConnectivityViewModel()),
       ],
       child: const MyApp(),
     ),

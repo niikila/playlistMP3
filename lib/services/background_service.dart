@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 Future<void> setupNotificationChannel() async {
   await flutterLocalNotificationsPlugin.initialize(
@@ -24,7 +24,8 @@ Future<void> setupNotificationChannel() async {
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.createNotificationChannel(channel);
 }
 
@@ -77,7 +78,9 @@ void onStart(ServiceInstance service) async {
     final file = File('${dir.path}/$filename');
 
     try {
-      final request = await http.Client().send(http.Request('GET', Uri.parse(url)));
+      final request = await http.Client().send(
+        http.Request('GET', Uri.parse(url)),
+      );
       final contentLength = request.contentLength ?? 0;
       int downloaded = 0;
 
@@ -102,71 +105,75 @@ void onStart(ServiceInstance service) async {
         ),
       );
 
-      request.stream.listen((chunk) {
-        sink.add(chunk);
-        downloaded += chunk.length;
+      request.stream.listen(
+        (chunk) {
+          sink.add(chunk);
+          downloaded += chunk.length;
 
-        double progress = contentLength > 0 ? downloaded / contentLength : 0;
+          double progress = contentLength > 0 ? downloaded / contentLength : 0;
 
-        service.invoke('downloadProgress', {
-          'filename': filename,
-          'progress': progress,
-        });
+          service.invoke('downloadProgress', {
+            'filename': filename,
+            'progress': progress,
+          });
 
-        // 🔔 Actualizar notificación con progreso
-        flutterLocalNotificationsPlugin.show(
-          0,
-          'Descargando...',
-          filename,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              'my_channel_id',
-              'Descarga en segundo plano',
-              importance: Importance.low,
-              priority: Priority.low,
-              onlyAlertOnce: true,
-              showProgress: true,
-              maxProgress: 100,
-              progress: (progress * 100).toInt(),
+          // 🔔 Actualizar notificación con progreso
+          flutterLocalNotificationsPlugin.show(
+            0,
+            'Descargando...',
+            filename,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                'my_channel_id',
+                'Descarga en segundo plano',
+                importance: Importance.low,
+                priority: Priority.low,
+                onlyAlertOnce: true,
+                showProgress: true,
+                maxProgress: 100,
+                progress: (progress * 100).toInt(),
+              ),
             ),
-          ),
-        );
-      }, onDone: () async {
-        await sink.close();
-        service.invoke('downloadComplete', {'filename': filename});
+          );
+        },
+        onDone: () async {
+          await sink.close();
+          service.invoke('downloadComplete', {'filename': filename});
 
-        // Muestra notificación de completado
-        flutterLocalNotificationsPlugin.show(
-          0,
-          'Descarga completa',
-          filename,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'my_channel_id',
-              'Descarga en segundo plano',
-              importance: Importance.high,
-              priority: Priority.high,
+          // Muestra notificación de completado
+          flutterLocalNotificationsPlugin.show(
+            0,
+            'Descarga completa',
+            filename,
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'my_channel_id',
+                'Descarga en segundo plano',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
             ),
-          ),
-        );
-      }, onError: (e) {
-        service.invoke('downloadError', {'error': e.toString()});
+          );
+        },
+        onError: (e) {
+          service.invoke('downloadError', {'error': e.toString()});
 
-        // Muestra notificación de error
-        flutterLocalNotificationsPlugin.show(
-          0,
-          'Error al descargar',
-          e.toString(),
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'my_channel_id',
-              'Descarga en segundo plano',
-              importance: Importance.high,
-              priority: Priority.high,
+          // Muestra notificación de error
+          flutterLocalNotificationsPlugin.show(
+            0,
+            'Error al descargar',
+            e.toString(),
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'my_channel_id',
+                'Descarga en segundo plano',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
             ),
-          ),
-        );
-      });
+          );
+        },
+      );
     } catch (e) {
       service.invoke('downloadError', {'error': e.toString()});
     }

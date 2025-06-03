@@ -48,7 +48,6 @@ class _SongPageState extends State<SongPage> {
             ? value.totalDuration.inSeconds.toDouble()
             : 1.0;
 
-        // Usa _dragValue mientras el usuario mueve el slider, sino el valor real
         final currentValue = (_dragValue ??
             value.currentDuration.inSeconds.toDouble())
             .clamp(0, maxDuration)
