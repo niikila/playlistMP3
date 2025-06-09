@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
@@ -12,6 +13,11 @@ class SongViewmodel extends ChangeNotifier {
 
   Duration _currentDuration = Duration.zero;
   Duration _totalDuration = Duration.zero;
+  Duration _lastNotifiedPosition = Duration.zero;
+
+  late final StreamSubscription<Duration?> _durationSub;
+  late final StreamSubscription<Duration> _positionSub;
+  late final StreamSubscription<PlayerState> _playerStateSub;
 
   List<Song> _playlist = [];
   int _currentSongIndex = -1;
@@ -19,22 +25,20 @@ class SongViewmodel extends ChangeNotifier {
   String? _error;
 
   SongViewmodel() {
-    // Inicializamos la escucha de streams del audio player
     listenToDuration();
 
-    // Escucha eventos del servicio de fondo para progreso de descarga
     FlutterBackgroundService().on('downloadProgress').listen((event) {
       final filename = event?['filename'] as String?;
       final progress = event?['progress'] as double?;
 
       if (filename != null && progress != null) {
         Song? song;
-        for (var s in _playlist) {
-          if (_fileNameForSong(s) == filename) {
-            song = s;
-            break;
-          }
+        try {
+          song = _playlist.firstWhere((s) => _fileNameForSong(s) == filename);
+        } catch (_) {
+          song = null;
         }
+
         if (song != null) {
           song.downloadProgress = progress;
           notifyListeners();
@@ -42,22 +46,24 @@ class SongViewmodel extends ChangeNotifier {
       }
     });
 
-    // Escucha eventos cuando se completa una descarga
     FlutterBackgroundService().on('downloadComplete').listen((event) {
       final filename = event?['filename'] as String?;
+
       if (filename != null) {
         Song? song;
-        for (var s in _playlist) {
-          if (_fileNameForSong(s) == filename) {
-            song = s;
-            break;
-          }
+        try {
+          song = _playlist.firstWhere((s) => _fileNameForSong(s) == filename);
+        } catch (_) {
+          song = null;
         }
+
         if (song != null) {
           song.isDownloaded = true;
           song.downloadProgress = 1.0;
           notifyListeners();
         }
+
+        FlutterBackgroundService().invoke("stopService");
       }
     });
   }
@@ -102,38 +108,35 @@ class SongViewmodel extends ChangeNotifier {
     try {
       final source = AudioSource.uri(
         Uri.parse(path),
-        tag: MediaItem(
-          id: song.url,
-          title: song.title,
-          artist: song.author,
-          // duración opcional
-          // artUri también es opcional
-        ),
+        tag: MediaItem(id: song.url, title: song.title, artist: song.author),
       );
 
       await _audioPlayer.setAudioSource(source);
       await _audioPlayer.play();
     } catch (e) {
-      print("Error al reproducir: $e");
+      print("Error al reproducir");
     }
 
     notifyListeners();
   }
 
   void listenToDuration() {
-    _audioPlayer.durationStream.listen((newDuration) {
+    _durationSub = _audioPlayer.durationStream.listen((newDuration) {
       if (newDuration != null) {
         _totalDuration = newDuration;
         notifyListeners();
       }
     });
 
-    _audioPlayer.positionStream.listen((newPosition) {
-      _currentDuration = newPosition;
-      notifyListeners();
+    _positionSub = _audioPlayer.positionStream.listen((newPosition) {
+      if ((newPosition - _lastNotifiedPosition).inMilliseconds.abs() >= 500) {
+        _currentDuration = newPosition;
+        _lastNotifiedPosition = newPosition;
+        notifyListeners();
+      }
     });
 
-    _audioPlayer.playerStateStream.listen((playerState) {
+    _playerStateSub = _audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.processingState == ProcessingState.completed) {
         playNext();
       }
@@ -206,15 +209,16 @@ class SongViewmodel extends ChangeNotifier {
           : null;
 
   int get currentSongIndex => _currentSongIndex;
-
   bool get isLoading => _isLoading;
   String? get error => _error;
-
   Duration get currentDuration => _currentDuration;
   Duration get totalDuration => _totalDuration;
 
   @override
   void dispose() {
+    _durationSub.cancel();
+    _positionSub.cancel();
+    _playerStateSub.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
